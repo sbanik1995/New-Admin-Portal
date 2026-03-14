@@ -4,7 +4,6 @@ const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
 
 const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
@@ -33,12 +32,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Session-based authentication (in-memory store for local/dev use).
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'default_session_secret',
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: MONGO_URI }),
     cookie: { maxAge: 1000 * 60 * 60 * 8 }, // 8 hours
   })
 );
@@ -56,6 +55,12 @@ app.use('/api/bugs', bugRoutes);
 // Health endpoint to quickly verify server status.
 app.get('/health', (req, res) => {
   res.status(200).json({ message: 'Admin portal server is running.' });
+});
+
+// Generic error handler keeps API failures structured.
+app.use((error, req, res, next) => {
+  console.error('Unhandled error:', error);
+  res.status(500).json({ message: 'Something went wrong. Please try again.' });
 });
 
 app.listen(PORT, () => {

@@ -148,9 +148,26 @@ async function loadTasks() {
   );
 }
 
+// We support simple status toggle to keep task operations quick.
 window.updateTaskStatus = async (id) => {
-  const response = await api(`/api/tasks/${id}`);
-  if (!response) return;
+  const allTasksResponse = await api('/api/tasks');
+  if (!allTasksResponse) return;
+
+  const tasks = await allTasksResponse.json();
+  const task = tasks.find((entry) => entry._id === id);
+  if (!task) return;
+
+  const sequence = ['Pending', 'In Progress', 'Completed'];
+  const nextStatus = sequence[(sequence.indexOf(task.status) + 1) % sequence.length];
+
+  await api(`/api/tasks/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status: nextStatus }),
+  });
+
+  await loadTasks();
+  await loadOverview();
 };
 
 window.deleteTask = async (id) => {
@@ -177,27 +194,6 @@ document.getElementById('taskForm').addEventListener('submit', async (event) => 
   await loadTasks();
   await loadOverview();
 });
-
-// We support simple status toggle to keep task operations quick.
-window.updateTaskStatus = async (id) => {
-  const allTasksResponse = await api('/api/tasks');
-  if (!allTasksResponse) return;
-  const tasks = await allTasksResponse.json();
-  const task = tasks.find((entry) => entry._id === id);
-  if (!task) return;
-
-  const sequence = ['Pending', 'In Progress', 'Completed'];
-  const nextStatus = sequence[(sequence.indexOf(task.status) + 1) % sequence.length];
-
-  await api(`/api/tasks/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status: nextStatus }),
-  });
-
-  await loadTasks();
-  await loadOverview();
-};
 
 async function loadReports() {
   const response = await api('/api/test-reports');
