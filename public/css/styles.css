@@ -1,0 +1,158 @@
+/* Base page styles */
+:root {
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --primary: #1e3a8a;
+  --primary-light: #2563eb;
+  --text: #0f172a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.auth-body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--card);
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
+.auth-card form,
+.form-grid,
+.form-inline {
+  display: grid;
+  gap: 10px;
+}
+
+input,
+select,
+button {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+button {
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--primary-light);
+}
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+}
+
+.sidebar {
+  width: 250px;
+  background: #0f172a;
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar nav {
+  display: grid;
+  gap: 8px;
+  margin: 20px 0;
+}
+
+.nav-btn {
+  text-align: left;
+  background: #1e293b;
+}
+
+.nav-btn.active {
+  background: var(--primary-light);
+}
+
+.logout-btn {
+  margin-top: auto;
+  background: #b91c1c;
+}
+
+.content {
+  flex: 1;
+  padding: 24px;
+}
+
+.section {
+  display: none;
+}
+
+.section.active {
+  display: block;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.list {
+  margin-top: 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.list li {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.message {
+  min-height: 18px;
+  color: #b91c1c;
+}
+
+.inline-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+}
