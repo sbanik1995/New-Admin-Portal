@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Portal Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <h2>Admin Portal</h2>
+        <nav>
+          <button data-section="dashboard" class="nav-btn active">Dashboard</button>
+          <button data-section="attendance" class="nav-btn">Attendance</button>
+          <button data-section="leaves" class="nav-btn">Leaves</button>
+          <button data-section="meetings" class="nav-btn">Meetings</button>
+          <button data-section="tasks" class="nav-btn">Tasks</button>
+          <button data-section="reports" class="nav-btn">Test Reports</button>
+          <button data-section="documents" class="nav-btn">Project Documents</button>
+          <button data-section="bugs" class="nav-btn">Bug Reporting</button>
+        </nav>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </aside>
+
+      <main class="content">
+        <section id="dashboard" class="section active">
+          <h1>Dashboard Overview</h1>
+          <div id="overviewCards" class="card-grid"></div>
+        </section>
+
+        <section id="attendance" class="section">
+          <h1>Attendance Management</h1>
+          <form id="attendanceForm" class="form-inline">
+            <select id="attendanceStatus" required>
+              <option value="">Select status</option>
+              <option value="Present">Present</option>
+              <option value="Absent">Absent</option>
+            </select>
+            <button type="submit">Mark Attendance</button>
+          </form>
+          <ul id="attendanceList" class="list"></ul>
+        </section>
+
+        <section id="leaves" class="section">
+          <h1>Leave Management</h1>
+          <form id="leaveForm" class="form-grid">
+            <select id="leaveType" required>
+              <option value="">Leave Type</option>
+              <option value="Sick">Sick</option>
+              <option value="Casual">Casual</option>
+              <option value="Personal">Personal</option>
+            </select>
+            <input type="date" id="leaveStartDate" required />
+            <input type="date" id="leaveEndDate" required />
+            <input type="text" id="leaveReason" placeholder="Reason (optional)" />
+            <button type="submit">Apply Leave</button>
+          </form>
+          <ul id="leaveList" class="list"></ul>
+        </section>
+
+        <section id="meetings" class="section">
+          <h1>Meeting Manager</h1>
+          <form id="meetingForm" class="form-grid">
+            <input type="text" id="meetingTitle" placeholder="Title" required />
+            <input type="date" id="meetingDate" required />
+            <input type="time" id="meetingTime" required />
+            <input type="text" id="meetingDescription" placeholder="Description" />
+            <button type="submit">Add Meeting</button>
+          </form>
+          <ul id="meetingList" class="list"></ul>
+        </section>
+
+        <section id="tasks" class="section">
+          <h1>Daily Task List</h1>
+          <form id="taskForm" class="form-grid">
+            <input type="text" id="taskTitle" placeholder="Task title" required />
+            <input type="text" id="taskDescription" placeholder="Task description" />
+            <select id="taskStatus" required>
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+            <button type="submit">Add Task</button>
+          </form>
+          <ul id="taskList" class="list"></ul>
+        </section>
+
+        <section id="reports" class="section">
+          <h1>Test Report Section</h1>
+          <form id="reportForm" class="form-grid" enctype="multipart/form-data">
+            <input type="text" id="reportTitle" placeholder="Report title" required />
+            <input type="date" id="reportDate" required />
+            <input type="text" id="reportDescription" placeholder="Description" />
+            <input type="file" id="reportFile" accept=".pdf,.doc,.docx" required />
+            <button type="submit">Upload Report</button>
+          </form>
+          <ul id="reportList" class="list"></ul>
+        </section>
+
+        <section id="documents" class="section">
+          <h1>Project Documents</h1>
+          <form id="documentForm" class="form-grid" enctype="multipart/form-data">
+            <input type="text" id="documentTitle" placeholder="Document title" required />
+            <input type="text" id="documentDescription" placeholder="Description" />
+            <input type="file" id="documentFile" required />
+            <button type="submit">Upload Document</button>
+          </form>
+          <ul id="documentList" class="list"></ul>
+        </section>
+
+        <section id="bugs" class="section">
+          <h1>Bug Reporting</h1>
+          <form id="bugForm" class="form-grid" enctype="multipart/form-data">
+            <input type="text" id="bugTitle" placeholder="Bug title" required />
+            <input type="text" id="bugDescription" placeholder="Description" required />
+            <select id="bugSeverity" required>
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+            </select>
+            <select id="bugStatus" required>
+              <option value="Open">Open</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Resolved">Resolved</option>
+              <option value="Closed">Closed</option>
+            </select>
+            <input type="file" id="bugScreenshot" accept="image/*" />
+            <button type="submit">Submit Bug</button>
+          </form>
+          <ul id="bugList" class="list"></ul>
+        </section>
+      </main>
+    </div>
+
+    <script src="/js/dashboard.js"></script>
+  </body>
+</html>
