@@ -62,3 +62,12 @@ A complete full-stack admin portal to manage daily office operations.
 - Password: `admin123`
 
 > Change credentials in `.env` for production use.
+
+## Preview URL Notes
+
+If your hosted preview serves the repository root as static content, use:
+
+- `/` -> redirects to `/public/index.html`
+- `/preview` -> redirects to `/public/dashboard.html`
+
+This avoids `Not Found` pages in preview environments that do not run `server.js`.
