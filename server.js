@@ -1,9 +1,110 @@
 // Entry point of the Admin Portal server.
-require('dotenv').config();
+const fs = require('fs');
 const path = require('path');
-const express = require('express');
-const mongoose = require('mongoose');
-const session = require('express-session');
+const http = require('http');
+
+// Load environment variables only when dotenv is available.
+try {
+  require('dotenv').config();
+} catch (error) {
+  console.warn('dotenv is not installed. Falling back to process environment variables.');
+}
+
+const PORT = process.env.PORT || 3000;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/admin_portal';
+const publicDir = path.join(__dirname, 'public');
+
+/**
+ * Minimal fallback static server used when project dependencies are unavailable.
+ * This keeps local "Preview" tabs functional in constrained environments.
+ */
+function startFallbackPreviewServer() {
+  const mimeTypes = {
+    '.html': 'text/html; charset=utf-8',
+    '.css': 'text/css; charset=utf-8',
+    '.js': 'application/javascript; charset=utf-8',
+    '.json': 'application/json; charset=utf-8',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.gif': 'image/gif',
+    '.svg': 'image/svg+xml',
+    '.ico': 'image/x-icon',
+    '.webp': 'image/webp',
+  };
+
+  const resolveStaticPath = (requestPath) => {
+    if (requestPath === '/' || requestPath === '/login') {
+      return path.join(publicDir, 'index.html');
+    }
+
+    if (requestPath === '/dashboard' || requestPath === '/preview') {
+      return path.join(publicDir, 'dashboard.html');
+    }
+
+    const sanitized = requestPath.replace(/\.\./g, '');
+    return path.join(publicDir, sanitized);
+  };
+
+  const server = http.createServer((req, res) => {
+    const requestPath = (req.url || '/').split('?')[0];
+
+    if (requestPath === '/health') {
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ message: 'Fallback preview server is running.' }));
+      return;
+    }
+
+    if (requestPath.startsWith('/api/')) {
+      res.writeHead(503, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(
+        JSON.stringify({
+          message:
+            'API is unavailable because dependencies are not installed in this environment. Install dependencies to enable backend APIs.',
+        })
+      );
+      return;
+    }
+
+    let filePath = resolveStaticPath(requestPath);
+
+    if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
+      filePath = path.join(publicDir, 'index.html');
+    }
+
+    fs.readFile(filePath, (error, content) => {
+      if (error) {
+        res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end('Unable to load preview page.');
+        return;
+      }
+
+      const ext = path.extname(filePath).toLowerCase();
+      res.writeHead(200, {
+        'Content-Type': mimeTypes[ext] || 'application/octet-stream',
+      });
+      res.end(content);
+    });
+  });
+
+  server.listen(PORT, () => {
+    console.log(`Fallback preview server running on http://localhost:${PORT}`);
+  });
+}
+
+let express;
+let mongoose;
+let session;
+
+try {
+  express = require('express');
+  mongoose = require('mongoose');
+  session = require('express-session');
+} catch (error) {
+  console.warn('Core dependencies are missing. Starting fallback preview server.');
+  startFallbackPreviewServer();
+  return;
+}
 
 const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
@@ -16,9 +117,6 @@ const projectDocumentRoutes = require('./routes/projectDocumentRoutes');
 const bugRoutes = require('./routes/bugRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/admin_portal';
-const publicDir = path.join(__dirname, 'public');
 
 mongoose
   .connect(MONGO_URI)
