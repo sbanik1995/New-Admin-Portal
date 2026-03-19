@@ -18,6 +18,7 @@ const bugRoutes = require('./routes/bugRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/admin_portal';
+const publicDir = path.join(__dirname, 'public');
 
 mongoose
   .connect(MONGO_URI)
@@ -30,7 +31,7 @@ mongoose
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(publicDir));
 
 // Session-based authentication (in-memory store for local/dev use).
 app.use(
@@ -41,6 +42,16 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 60 * 8 }, // 8 hours
   })
 );
+
+// Explicit frontend routes prevent "Not Found" pages in environments
+// that open dashboard/preview paths directly (without .html suffix).
+app.get(['/', '/login'], (req, res) => {
+  res.sendFile(path.join(publicDir, 'index.html'));
+});
+
+app.get(['/dashboard', '/preview'], (req, res) => {
+  res.sendFile(path.join(publicDir, 'dashboard.html'));
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
@@ -55,6 +66,16 @@ app.use('/api/bugs', bugRoutes);
 // Health endpoint to quickly verify server status.
 app.get('/health', (req, res) => {
   res.status(200).json({ message: 'Admin portal server is running.' });
+});
+
+// API 404 handler keeps unknown API requests explicit.
+app.use('/api', (req, res) => {
+  res.status(404).json({ message: 'API endpoint not found.' });
+});
+
+// Frontend fallback: route unknown non-API URLs to login page.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(publicDir, 'index.html'));
 });
 
 // Generic error handler keeps API failures structured.
