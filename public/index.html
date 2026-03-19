@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Portal Login</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="auth-body">
+    <div class="glow"></div>
+    <div class="auth-card glass-card">
+      <h1>Welcome back</h1>
+      <p>Sign in to access your admin workspace.</p>
+      <form id="loginForm">
+        <label>Username</label>
+        <input type="text" id="username" required />
+        <label>Password</label>
+        <input type="password" id="password" required />
+        <button type="submit">Login</button>
+      </form>
+      <p id="loginMessage" class="message"></p>
+      <small>Default credentials: admin / admin123</small>
+    </div>
+
+    <script src="/js/login.js"></script>
+  </body>
+</html>
